@@ -8,17 +8,11 @@
 			"problemMatcher": "$func-node-watch",
 			"isBackground": true,
 			"dependsOn": "npm install (functions)",
-			"options": {
-				"cwd": "${workspaceFolder}/backend"
-			}
 		},
 		{
 			"type": "shell",
 			"label": "npm install (functions)",
 			"command": "npm install",
-			"options": {
-				"cwd": "${workspaceFolder}/backend"
-			}
 		},
 		{
 			"type": "shell",

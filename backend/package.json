@@ -11,5 +11,5 @@
     "@azure/functions": "^4.0.0",
     "uuid": "^13.0.0"
   },
-  "main": "src/{index.js,functions/*.js}"
+  "main": "index.js"
 }

@@ -1,6 +1,7 @@
 const { app } = require("@azure/functions");
 const { routePoints } = require("../../shared/cosmosClient");
 
+
 app.http("uploadPoints", {
   methods: ["POST"],
   route: "routes/{routeId}/points",
@@ -39,4 +40,5 @@ app.http("uploadPoints", {
     }
   }
 });
+
 

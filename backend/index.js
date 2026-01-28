@@ -1,6 +1,14 @@
 const { app } = require("@azure/functions");
 
+//load functions
+require("./src/functions/startRoute");
+require("./src/functions/endRoute");
+require("./src/functions/uploadPoints");
+
+// Set up the Functions app
 app.setup({ enableHttpStream: true });
 
-// 🔥 load your actual app
-require("./src");
+// -----------------------------
+// Export app for Azure Functions runtime
+// -----------------------------
+module.exports = app;

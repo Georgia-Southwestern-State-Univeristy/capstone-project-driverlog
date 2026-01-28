@@ -2,6 +2,7 @@ const { app } = require("@azure/functions");
 const { v4: uuid } = require("uuid");
 const { routes } = require("../../shared/cosmosClient");
 
+
 app.http("startRoute", {
   methods: ["POST"],
   route: "routes/start",
@@ -33,4 +34,5 @@ app.http("startRoute", {
     }
   }
 });
+
 

@@ -19,27 +19,33 @@ tools:context=".MainActivity">
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintVertical_bias="0.339" />
 
-<Button
-    android:id="@+id/routeControl"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Button"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.498"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.793" />
+    <Button
+        android:id="@+id/routeControl"
+        android:layout_width="163dp"
+        android:layout_height="75dp"
+        android:backgroundTint="#246B19"
+        android:text="Start"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.564" />
 
-<EditText
-    android:id="@+id/editTextText"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:ems="10"
-    android:inputType="text"
-    app:layout_constraintBottom_toTopOf="@+id/routeControl"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/textView" />
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="163dp"
+        android:layout_marginTop="82dp"
+        android:layout_marginEnd="154dp"
+        android:layout_marginBottom="156dp"
+        android:text="History"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/routeControl"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

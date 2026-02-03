@@ -2,6 +2,7 @@ package com.example.driverlogapp;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -16,9 +17,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 public class MainActivity extends AppCompatActivity {
 
     // Declare variables
+    private Button getLocationBtn;
     private FusedLocationProviderClient locationClient;
     private TextView locationText;
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
+    private boolean isRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,24 +29,40 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Initialize TextView and Button from layout
-        locationText = findViewById(R.id.editTextText);
-        Button getLocationBtn = findViewById(R.id.routeControl);
+        getLocationBtn = findViewById(R.id.routeControl);
 
         // Initialize the location provider client
         locationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Set a click listener for the button
-        getLocationBtn.setOnClickListener(v -> getCurrentLocation());
+        getLocationBtn.setOnClickListener(v -> routeManagement());
     }
 
     // Function to get the current location
-    private void getCurrentLocation() {
+    private void routeManagement() {
         // Check if location permission is granted
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Request permission if not granted
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
             return;
         }
+        //If block controlling start stopping route and button display
+        if (!isRunning) {
+            isRunning = true;
+            getLocationBtn.setText("Stop");
+            getLocationBtn.setBackgroundColor(Color.RED);
+            Toast.makeText(this, "Route Started", Toast.LENGTH_SHORT).show();
+            //Send blank JSON file with expected headers to backend to start recording route on that end
+        }
+        else {
+            isRunning = false;
+            getLocationBtn.setText("Start");
+            getLocationBtn.setBackgroundColor(Color.parseColor("#246B19"));
+            Toast.makeText(this, "Route Stopped", Toast.LENGTH_SHORT).show();
+            //Send blank JSON file with expected headers to backend to stop recording route on that end
+        }
+
+
 
 
         // Fetch the last known location
@@ -79,10 +98,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == LOCATION_PERMISSION_REQUEST && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // If permission is granted, fetch location
-            getCurrentLocation();
+            routeManagement();
         } else {
             // If permission is denied, show message
-            locationText.setText("Location permission denied");
+            Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
         }
     }
 }

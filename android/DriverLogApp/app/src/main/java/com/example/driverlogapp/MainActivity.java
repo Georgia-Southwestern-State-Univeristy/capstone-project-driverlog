@@ -21,7 +21,7 @@ import okhttp3.*;
 public class MainActivity extends AppCompatActivity {
 
     // Declare variables
-    private int routeID;
+    private String routeID;
     private boolean loopFinished;
 
     private Button getLocationBtn;
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // initialize variables
-        routeID = 0;
+        routeID = "";
 
         //If block controlling start stopping route and button display
         if (!isRunning) {
@@ -133,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public int[] startRoute() {
-        final int[] routeID = {0};
+    public String[] startRoute() {
+        final String[] routeID = {""};
         new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                         .build();
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    routeID[0] = response.code();
+                    routeID[0] = response.body().toString();
                 }
                 } catch (IOException e) {
                 e.printStackTrace();

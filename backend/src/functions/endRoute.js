@@ -22,7 +22,7 @@ app.http("endRoute", {
 
       const route = routeResults[0];
 
-      // 🚫 Prevent ending an already completed route
+      // 🚫 Prevent ending an already completed route.
       if (route.status === "completed") {
         return {
           status: 409,

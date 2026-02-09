@@ -62,46 +62,48 @@ public class MainActivity extends AppCompatActivity {
             isRunning = true;
             getLocationBtn.setText("Stop");
             getLocationBtn.setBackgroundColor(Color.RED);
-            Toast.makeText(this, "Route Started", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Route Started", Toast.LENGTH_SHORT).show();
             //Send blank JSON file with expected headers to backend to start recording route on that end
             routeID = startRoute()[0];
             Toast.makeText(this, "Route ID: " + routeID, Toast.LENGTH_SHORT).show();
+            Thread pollingThread =new Thread(() -> {
+                //While/For loop controlling the polling and logging of location data
+                while (isRunning) {
+                    //early escape check
+                    loopFinished = false;
+
+                    for (int i = 0; i < 30; i++) {
+                        // Fetch the last known location
+                        locationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if (location != null) {
+                                    //Add location information to JSON file
+
+                                }
+                            }
+                        });
+
+                        //timer so the loop doesn't run too fast
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    //Send populated JSON file to backend and repeat
+                    loopFinished = true;
+                }
+            });
+            pollingThread.start();
         }
         else {
             isRunning = false;
             getLocationBtn.setText("Start");
             getLocationBtn.setBackgroundColor(Color.parseColor("#246B19"));
-            Toast.makeText(this, "Route Stopped", Toast.LENGTH_SHORT).show();
-        }
-
-        //While/For loop controlling the polling and logging of location data
-        while (isRunning) {
-            //early escape check
-            loopFinished = false;
-
-            for (int i = 0; i < 30; i++) {
-                // Fetch the last known location
-                locationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            //Add location information to JSON file
-
-                        }
-                    }
-                });
-
-                //timer so the loop doesn't run too fast
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            //Send populated JSON file to backend and repeat
-            loopFinished = true;
+            //Toast.makeText(this, "Route Stopped", Toast.LENGTH_SHORT).show();
         }
 
         //if block to check is JSON file exists and to send it to backend
@@ -135,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String[] startRoute() {
         final String[] routeID = {""};
-        new Thread(() -> {
+        Thread startThread =new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
 
@@ -151,12 +153,18 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        startThread.start();
+        try {
+            startThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return routeID;
     }
 
     public void stopRoute() {
-        new Thread(() -> {
+        Thread stopThread =new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
 
@@ -170,6 +178,12 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 }
         });
+        stopThread.start();
+        try {
+            stopThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 

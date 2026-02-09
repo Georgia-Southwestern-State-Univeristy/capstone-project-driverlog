@@ -16,10 +16,10 @@ export default function Navbar() {
 
                 <nav className="flex gap-2">
 
-                    <NavLink to="/" className={linkClass}>Home</NavLink>
                     <NavLink to="/dashboard" className={linkClass}>Dashboard</NavLink>
                     <NavLink to="/assignments" className={linkClass}>Assignments</NavLink>
                     <NavLink to="/reports" className={linkClass}>Reports</NavLink>
+                    <NavLink to="/flagged" className={linkClass}>Flagged</NavLink>
                     <NavLink to="/Login" className={linkClass}>Login</NavLink>
 
                 </nav>

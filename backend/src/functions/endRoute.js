@@ -22,6 +22,14 @@ app.http("endRoute", {
 
       const route = routeResults[0];
 
+      // 🚫 Prevent ending an already completed route.
+      if (route.status === "completed") {
+        return {
+          status: 409,
+          body: "Route already ended"
+        };
+      }
+
       // 2. Fetch points in time order
       const { resources: points } = await routePoints.items.query({
         query: "SELECT * FROM c WHERE c.routeId = @routeId ORDER BY c.ts",

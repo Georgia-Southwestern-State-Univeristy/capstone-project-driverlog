@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private String fileCheck;
     private String routeID;
     private String summary;
-    private boolean loopFinished;
 
     private Button getLocationBtn;
     private FusedLocationProviderClient locationClient;
@@ -75,53 +74,50 @@ public class MainActivity extends AppCompatActivity {
             //Send blank JSON file with expected headers to backend to start recording route on that end
             routeID = startRoute()[0];
             editText.setText(routeID);
-            Thread pollingThread =new Thread(() -> {
-                //While/For loop controlling the polling and logging of location data
-                while (isRunning) {
-                    //early escape check
-                    loopFinished = false;
-                    final String[] routeFile = {"{ \"points\": [ "};
+            if (routeID.isEmpty()) {
+                Toast.makeText(this, "Route Failed", Toast.LENGTH_SHORT).show();
+                isRunning = false;
+                getLocationBtn.setText("Start");
+                getLocationBtn.setBackgroundColor(Color.parseColor("#246B19"));
+            }
+            final String[] routeFile = {"{ \"points\": [ "};
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(1000);
 
-                    for (int i = 0; i < 1; i++) {
-                        // Fetch the last known location
-                        locationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                if (location != null) {
-                                    //Add location information to JSON file
-                                    routeFile[0] = routeFile[0].concat("{ \"ts\": " + location.getTime() + ", \"lat\": " + location.getLatitude() + ", \"lon\": " + location.getLongitude() + ", \"speed\": " + location.getSpeed() + " }, ");
-
-                                }
-                            }
-                        });
-
-                        //timer so the loop doesn't run too fast
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+            LocationCallback locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(@NonNull LocationResult locationResult) {
+                    for (Location location : locationResult.getLocations()) {
+                        if (location != null) {
+                            routeFile[0] = routeFile[0].concat("{ \"ts\": " + location.getTime() + ", \"lat\": " + location.getLatitude() + ", \"lon\": " + location.getLongitude() + ", \"speed\": " + location.getSpeed() + " }, ");
                         }
-
                     }
 
-                    //Send populated JSON file to backend and repeat
-                    routeFile[0] = routeFile[0].substring(0, routeFile[0].length() - 2);
-                    routeFile[0] = routeFile[0].concat(" ] }");
-                    fileCheck = routeFile[0];
-                    try {
-                        OkHttpClient client = new OkHttpClient();
+                }
 
-                        RequestBody body = RequestBody.create(routeFile[0], MediaType.parse("application/json"));
-                        Request request = new Request.Builder()
-                                .url("https://driverlogbackend-cwe7gpeuamfhffgt.eastus-01.azurewebsites.net/api/routes/" + routeID + "/points")
-                                .post(body)
-                                .build();
-                        Response response = client.newCall(request).execute();
-                    } catch (IOException e) {
+            };
+
+            locationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+
+            Thread pollingThread =new Thread(() -> {
+
+
+                while (isRunning) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    loopFinished = true;
+                    if (isRunning && routeFile[0].length() > 17) {
+                        routeFile[0] = routeFile[0].substring(0, routeFile[0].length() - 2);
+                        routeFile[0] = routeFile[0].concat(" ] }");
+                        fileCheck = routeFile[0];
+                        sendRouteData(routeFile[0]);
+                        routeFile[0] = "{ \"points\": [ ";
+                    }
                 }
+                locationClient.removeLocationUpdates(locationCallback);
             });
             pollingThread.start();
         }
@@ -136,6 +132,28 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private void sendRouteData(String routeFile) {
+        if (routeID == null || routeID.isEmpty()) {
+            return;
+        }
+        try {
+            OkHttpClient client = new OkHttpClient();
+
+            RequestBody body = RequestBody.create(routeFile, MediaType.parse("application/json"));
+            Request request = new Request.Builder()
+                    .url("https://driverlogbackend-cwe7gpeuamfhffgt.eastus-01.azurewebsites.net/api/routes/" + routeID + "/points")
+                    .post(body)
+                    .build();
+            Response response = client.newCall(request).execute();
+            response.close();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public String[] startRoute() {
         final String[] routeID = {""};
@@ -173,13 +191,7 @@ public class MainActivity extends AppCompatActivity {
     public String[] stopRoute(String routeID) {
         Toast.makeText(this, routeID, Toast.LENGTH_SHORT).show();
         final String[] summary = {""};
-        while (!loopFinished) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        editText.setText(fileCheck);
         Thread stopThread =new Thread(() -> {
             try {
                 String urlString = "https://driverlogbackend-cwe7gpeuamfhffgt.eastus-01.azurewebsites.net/api/routes/" + routeID + "/end";

@@ -12,6 +12,9 @@ app.http("uploadPoints", {
       const body = await req.json();
       const points = body?.points;
 
+      //Get client json file sent for logging
+      context.log("HTTP request body:", body);
+
       if (!routeId || !Array.isArray(points)) {
         return { status: 400, body: "Invalid payload" };
       }

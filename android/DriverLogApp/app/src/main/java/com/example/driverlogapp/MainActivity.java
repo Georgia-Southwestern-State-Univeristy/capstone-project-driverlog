@@ -14,6 +14,7 @@ import android.widget.*;
 import com.google.android.gms.location.*;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+
 import java.io.IOException;
 
 import okhttp3.*;
@@ -21,19 +22,25 @@ import okhttp3.*;
 public class MainActivity extends AppCompatActivity {
 
     // Declare variables
+    private String fileCheck;
     private String routeID;
+    private String summary;
     private boolean loopFinished;
 
     private Button getLocationBtn;
     private FusedLocationProviderClient locationClient;
-    private TextView editText;
+    private EditText editText;
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
-    private boolean isRunning = false;
+    private boolean isRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        editText = findViewById(R.id.editTextText);
+
+        isRunning = false;
 
         // Initialize TextView and Button from layout
         getLocationBtn = findViewById(R.id.routeControl);
@@ -43,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Set a click listener for the button
         getLocationBtn.setOnClickListener(v -> routeManagement());
+
     }
 
     // Function to get the current location
@@ -55,30 +63,33 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // initialize variables
-        routeID = "";
+
 
         //If block controlling start stopping route and button display
         if (!isRunning) {
+            routeID = "";
             isRunning = true;
             getLocationBtn.setText("Stop");
             getLocationBtn.setBackgroundColor(Color.RED);
             //Toast.makeText(this, "Route Started", Toast.LENGTH_SHORT).show();
             //Send blank JSON file with expected headers to backend to start recording route on that end
             routeID = startRoute()[0];
-            Toast.makeText(this, "Route ID: " + routeID, Toast.LENGTH_SHORT).show();
+            editText.setText(routeID);
             Thread pollingThread =new Thread(() -> {
                 //While/For loop controlling the polling and logging of location data
                 while (isRunning) {
                     //early escape check
                     loopFinished = false;
+                    final String[] routeFile = {"{ \"points\": [ "};
 
-                    for (int i = 0; i < 30; i++) {
+                    for (int i = 0; i < 1; i++) {
                         // Fetch the last known location
                         locationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                             @Override
                             public void onSuccess(Location location) {
                                 if (location != null) {
                                     //Add location information to JSON file
+                                    routeFile[0] = routeFile[0].concat("{ \"ts\": " + location.getTime() + ", \"lat\": " + location.getLatitude() + ", \"lon\": " + location.getLongitude() + ", \"speed\": " + location.getSpeed() + " }, ");
 
                                 }
                             }
@@ -94,45 +105,36 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     //Send populated JSON file to backend and repeat
+                    routeFile[0] = routeFile[0].substring(0, routeFile[0].length() - 2);
+                    routeFile[0] = routeFile[0].concat(" ] }");
+                    fileCheck = routeFile[0];
+                    try {
+                        OkHttpClient client = new OkHttpClient();
+
+                        RequestBody body = RequestBody.create(routeFile[0], MediaType.parse("application/json"));
+                        Request request = new Request.Builder()
+                                .url("https://driverlogbackend-cwe7gpeuamfhffgt.eastus-01.azurewebsites.net/api/routes/" + routeID + "/points")
+                                .post(body)
+                                .build();
+                        Response response = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     loopFinished = true;
                 }
             });
             pollingThread.start();
         }
         else {
+            summary = "";
             isRunning = false;
+            //Send blank JSON file with expected headers to backend to stop recording route on that end
+            summary = stopRoute(routeID)[0];
             getLocationBtn.setText("Start");
             getLocationBtn.setBackgroundColor(Color.parseColor("#246B19"));
             //Toast.makeText(this, "Route Stopped", Toast.LENGTH_SHORT).show();
         }
 
-        //if block to check is JSON file exists and to send it to backend
-        if (!loopFinished) {
-
-        }
-
-        //Send blank JSON file with expected headers to backend to stop recording route on that end
-        stopRoute();
-
-
-
-
-
-        // Fetch the last known location
-        locationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                //crashed with this line of code, presumably because location is null
-                //Toast.makeText(MainActivity.this, "location " + location.getLatitude(), Toast.LENGTH_SHORT).show();
-                if (location != null) {
-                    // Get latitude and longitude
-                    double lat = location.getLatitude();
-                    double lon = location.getLongitude();
-
-                    // Display location in TextView
-                }
-            }
-        });
     }
 
     public String[] startRoute() {
@@ -148,7 +150,12 @@ public class MainActivity extends AppCompatActivity {
                         .build();
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    routeID[0] = response.body().toString();
+                    ResponseBody responseBody = response.body();
+                    if (responseBody != null) {
+                        routeID[0] = responseBody.string();
+                        routeID[0] = routeID[0].substring(12);
+                        routeID[0] = routeID[0].substring(0, routeID[0].length() - 2);
+                    }
                 }
                 } catch (IOException e) {
                 e.printStackTrace();
@@ -163,17 +170,33 @@ public class MainActivity extends AppCompatActivity {
         return routeID;
     }
 
-    public void stopRoute() {
+    public String[] stopRoute(String routeID) {
+        Toast.makeText(this, routeID, Toast.LENGTH_SHORT).show();
+        final String[] summary = {""};
+        while (!loopFinished) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         Thread stopThread =new Thread(() -> {
             try {
+                String urlString = "https://driverlogbackend-cwe7gpeuamfhffgt.eastus-01.azurewebsites.net/api/routes/" + routeID + "/end";
                 OkHttpClient client = new OkHttpClient();
 
                 RequestBody body = RequestBody.create("{}", MediaType.parse("application/json"));
                 Request request = new Request.Builder()
-                        .url("https://driverlogbackend-cwe7gpeuamfhffgt.eastus-01.azurewebsites.net/api/routes/r-50f935f3-a637-4562-af78-56fd5323fc57/end")
+                        .url(urlString)
                         .post(body)
                         .build();
                 Response response = client.newCall(request).execute();
+                if (response.isSuccessful()) {
+                    ResponseBody responseBody = response.body();
+                    if (responseBody != null) {
+                        summary[0] = responseBody.string();
+                    }
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 }
@@ -184,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        return summary;
     }
 
 

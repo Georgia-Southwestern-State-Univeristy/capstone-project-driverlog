@@ -10,9 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.*;
 import com.google.android.gms.location.*;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 
 import java.io.IOException;
@@ -27,8 +29,11 @@ public class MainActivity extends AppCompatActivity {
     private String summary;
 
     private Button getLocationBtn;
+    private Button historyBtn;
+    private ImageButton historyExit;
     private FusedLocationProviderClient locationClient;
     private EditText editText;
+    private TextView historyText;
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
     private boolean isRunning;
 
@@ -41,8 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
         isRunning = false;
 
-        // Initialize TextView and Button from layout
+        // Initialize Buttons from layout
         getLocationBtn = findViewById(R.id.routeControl);
+        historyBtn = findViewById(R.id.history_view);
 
         // Initialize the location provider client
         locationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -50,6 +56,25 @@ public class MainActivity extends AppCompatActivity {
         // Set a click listener for the button
         getLocationBtn.setOnClickListener(v -> routeManagement());
 
+        historyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupWindow popupWindow = new PopupWindow(MainActivity.this);
+                View historyView = getLayoutInflater().inflate(R.layout.history_popup, null);
+                historyText = historyView.findViewById(R.id.summary_text);
+                historyExit = historyView.findViewById(R.id.exit_history_button);
+                String presentable  = summary.replaceAll(",", ",\n\n");
+                historyText.setText(presentable);
+                popupWindow.setContentView(historyView);
+                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+                historyExit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        popupWindow.dismiss();
+                    }
+                });
+            }
+        });
     }
 
     // Function to get the current location
@@ -80,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 getLocationBtn.setText("Start");
                 getLocationBtn.setBackgroundColor(Color.parseColor("#246B19"));
             }
+            final Object lockObject = new Object();
             final String[] routeFile = {"{ \"points\": [ "};
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -101,20 +127,26 @@ public class MainActivity extends AppCompatActivity {
             locationClient.requestLocationUpdates(locationRequest, locationCallback, null);
 
             Thread pollingThread =new Thread(() -> {
-
+                long lastSendTime = 0;
+                long sendInterval = 1000;
 
                 while (isRunning) {
+                    long currentTime = System.currentTimeMillis();
+
+                    if (currentTime - lastSendTime >= sendInterval && routeFile[0].length() > 17) {
+                        synchronized (lockObject) {
+                            routeFile[0] = routeFile[0].substring(0, routeFile[0].length() - 2);
+                            routeFile[0] = routeFile[0].concat(" ] }");
+                            fileCheck = routeFile[0];
+                            sendRouteData(routeFile[0]);
+                            routeFile[0] = "{ \"points\": [ ";
+                        }
+                        lastSendTime = currentTime;
+                    }
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                    }
-                    if (isRunning && routeFile[0].length() > 17) {
-                        routeFile[0] = routeFile[0].substring(0, routeFile[0].length() - 2);
-                        routeFile[0] = routeFile[0].concat(" ] }");
-                        fileCheck = routeFile[0];
-                        sendRouteData(routeFile[0]);
-                        routeFile[0] = "{ \"points\": [ ";
                     }
                 }
                 locationClient.removeLocationUpdates(locationCallback);

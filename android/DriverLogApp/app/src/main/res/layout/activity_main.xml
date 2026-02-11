@@ -7,18 +7,6 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context=".MainActivity">
 
-<TextView
-    android:id="@+id/textView"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Hello World!"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.517"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.339" />
-
     <Button
         android:id="@+id/routeControl"
         android:layout_width="163dp"
@@ -33,7 +21,7 @@ tools:context=".MainActivity">
         app:layout_constraintVertical_bias="0.564" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/history_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="163dp"
@@ -55,11 +43,9 @@ tools:context=".MainActivity">
         android:layout_marginStart="117dp"
         android:layout_marginTop="108dp"
         android:layout_marginEnd="85dp"
-        android:layout_marginBottom="89dp"
         android:ems="10"
+        android:hint="Route ID"
         android:inputType="text"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

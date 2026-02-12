@@ -47,7 +47,9 @@ Cosmos DB (NoSQL) currently has three containers defined.
         * totalDistanceMile
         * averageSpeedMph
         * completedAt (Date/Time when route completed)
-There are 3 Azure functions which expose 3 API endpoints used to interact with the backend.
+
+Azure functions which expose 3 API endpoints used to interact with the backend.
+
 * startRoute.js
     * This function starts the route by generating unique UUID for the route and passing back to client as response.
     * Creates the new route in the routes container of the database

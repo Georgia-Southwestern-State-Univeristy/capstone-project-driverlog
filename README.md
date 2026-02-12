@@ -17,7 +17,7 @@ Steps:
 4. Run 'npm run dev'
 5. Open the local URL provided in a web browser
 
-#BACKEND Info
+# BACKEND Info
 Using Azure Functions for API endpoints and Cosmos DB for database to store route information.
 
 Cosmos DB (NoSQL) currently has three containers defined.

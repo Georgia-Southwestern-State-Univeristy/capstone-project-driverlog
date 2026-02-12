@@ -4,6 +4,19 @@ This app currently allows the user to start and stop a route, as well as display
 
 Installation: download the .apk file from the release page (do not download the source code, it is not needed). Install the .apk file on an android device. Run the app.
 
+# Frontend Website
+This website provides the web-based interface for the DriverLog system. It will allow employers to send out assignments, view reports, and monitor flagged entries (currently only has sample data).
+Built with React, Vite, and TailwindCSS.
+
+Installation: 
+Make sure Node.js is installed. 
+Steps:
+1. Open a terminal and clone the repository
+2. Navigate to the 'frontend_website' folder
+3. Run 'npm install' in the frontend_website folder
+4. Run 'npm run dev'
+5. Open the local URL provided in a web browser
+
 #BACKEND Info
 Using Azure Functions for API endpoints and Cosmos DB for database to store route information.
 

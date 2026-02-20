@@ -81,6 +81,7 @@ app.http("endRoute", {
         id: routeId,
         routeId,
         userId: route.userId,
+        username: route.username,
 
         pointCount: points.length,
         durationSeconds,

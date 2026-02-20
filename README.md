@@ -91,7 +91,7 @@ BODY : {}
 
 </details>
 
-#Connection Information for Authentication
+# Connection Information for Authentication
 I'm showing an example below of using Postman to get token. Most of the settings here will be relevant to using other tools to authenticate.
 Bearer token for the user after authenticating and then adding it to the header in the request as Authorization with value of Bearer <token>
 <details>
@@ -116,10 +116,10 @@ Client Authentication = Send client credentials in body
 Refresh Token URL = <Same as Access Token URL if needed>
 </details>
 
-##For Mobile Auth App with Android
+## For Mobile Auth App with Android
 <details>
 <summary>Click to see Mobile Auth info</summary>
-###In auth_config.json we will need something like this...
+### In auth_config.json we will need something like this...
 {
   "client_id": "8a653568-603e-4249-aa36-373da6f46ffa",
   "authorization_user_agent": "DEFAULT",
@@ -136,12 +136,12 @@ Refresh Token URL = <Same as Access Token URL if needed>
   ]
 }
 
-###Request correct scope when getting token
+### Request correct scope when getting token
 String[] scopes = {
     "api://8a653568-603e-4249-aa36-373da6f46ffa/access_as_user"
 };
 
-###When sending token to app
+### When sending token to app
 Add these to Request Header where <access_token> is the token retrieved from the response after login.
 Authorization: Bearer <access_token>
 </details>
@@ -149,11 +149,11 @@ Authorization: Bearer <access_token>
 ## Website MSAL config for authentication
 <details>
 <summary>Click to see Web MSAL Auth config info</summary>
-###Using React or plain JavaScript
+### Using React or plain JavaScript
 Install the msal
 npm install @azure/msal-browser
 
-###MSAL config
+### MSAL config
 import { PublicClientApplication } from "@azure/msal-browser";
 
 const msalConfig = {

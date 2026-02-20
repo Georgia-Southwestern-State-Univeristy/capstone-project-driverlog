@@ -90,3 +90,100 @@ URL: https://driverlogbackend-cwe7gpeuamfhffgt.eastus-01.azurewebsites.net/api/r
 BODY : {}
 
 </details>
+
+#Connection Information for Authentication
+I'm showing an example below of using Postman to get token. Most of the settings here will be relevant to using other tools to authenticate.
+Bearer token for the user after authenticating and then adding it to the header in the request as Authorization with value of Bearer <token>
+<details>
+<summary>How I use Postman to get bearer token for authentication</summary>
+##Example using Postman to authenticate
+###Settings in the authentication tab to get token
+You'll need the Auth URL and Access Token URL for your app
+Once token is retrieve. I manually add it to body of request header as Authorization with value of Bearer <retrieved token value>
+
+###Settings:
+Auth Type = OAuth 2.0
+Add authorization data to = Request Headers
+Header prefix = Bearer
+Grant type = Authorization Code
+Authorize using browser = Yes
+Auth URL = https://login.microsoftonline.com/1e398b4b-eeb6-4dba-9585-6ec8a8e4daf3/oauth2/v2.0/authorize
+Access Token URL = https://login.microsoftonline.com/1e398b4b-eeb6-4dba-9585-6ec8a8e4daf3/oauth2/v2.0/token
+Client ID = <Client ID of the app. Supplied as needed>
+Client Secret = <Supplied as needed>
+Scope = api://8a653568-603e-4249-aa36-373da6f46ffa/access_as_user
+Client Authentication = Send client credentials in body
+Refresh Token URL = <Same as Access Token URL if needed>
+</details>
+
+##For Mobile Auth App with Android
+<details>
+<summary>Click to see Mobile Auth info</summary>
+###In auth_config.json we will need something like this...
+{
+  "client_id": "8a653568-603e-4249-aa36-373da6f46ffa",
+  "authorization_user_agent": "DEFAULT",
+  "redirect_uri": "msal8a653568-603e-4249-aa36-373da6f46ffa://auth",
+  "account_mode": "SINGLE",
+  "authorities": [
+    {
+      "type": "AAD",
+      "audience": {
+        "type": "AzureADMyOrg",
+        "tenant_id": "1e398b4b-eeb6-4dba-9585-6ec8a8e4daf3"
+      }
+    }
+  ]
+}
+
+###Request correct scope when getting token
+String[] scopes = {
+    "api://8a653568-603e-4249-aa36-373da6f46ffa/access_as_user"
+};
+
+###When sending token to app
+Add these to Request Header where <access_token> is the token retrieved from the response after login.
+Authorization: Bearer <access_token>
+</details>
+
+## Website MSAL config for authentication
+<details>
+<summary>Click to see Web MSAL Auth config info</summary>
+###Using React or plain JavaScript
+Install the msal
+npm install @azure/msal-browser
+
+###MSAL config
+import { PublicClientApplication } from "@azure/msal-browser";
+
+const msalConfig = {
+  auth: {
+    clientId: "8a653568-603e-4249-aa36-373da6f46ffa",
+    authority: "https://login.microsoftonline.com/1e398b4b-eeb6-4dba-9585-6ec8a8e4daf3",
+    redirectUri: "http://localhost:3000" // or prod URL
+  }
+};
+
+const msalInstance = new PublicClientApplication(msalConfig);
+
+
+### Login and Get Access Token
+const loginRequest = {
+  scopes: ["api://8a653568-603e-4249-aa36-373da6f46ffa/access_as_user"]
+};
+
+await msalInstance.loginRedirect(loginRequest);
+
+#### After login
+const response = await msalInstance.acquireTokenSilent(loginRequest);
+const accessToken = response.accessToken;
+
+### How to call our app but with placeholders
+
+fetch("https://yourfunctionapp.azurewebsites.net/api/YourFunction", {
+  method: "GET",
+  headers: {
+    "Authorization": `Bearer ${accessToken}`
+  }
+});
+</details>

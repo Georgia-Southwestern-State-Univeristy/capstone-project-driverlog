@@ -60,5 +60,20 @@ function requireRole(user, role) {
   }
 }
 
+/**
+ * Require any role helper
+ */
+function requireAnyRole(user, allowedRoles) {
+  const hasRole = allowedRoles.some(role =>
+    user.roles.includes(role)
+  );
 
-module.exports = { getUserFromRequest, requireUser, requireRole };
+  if (!hasRole) {
+    const error = new Error("Forbidden");
+    error.status = 403;
+    throw error;
+  }
+}
+
+
+module.exports = { getUserFromRequest, requireUser, requireRole, requireAnyRole };

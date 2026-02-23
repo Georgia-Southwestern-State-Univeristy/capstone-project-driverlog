@@ -18,14 +18,47 @@ function getUserFromRequest(req) {
       getClaim("upn") ||
       getClaim("name");
 
+  // App Roles assigned in App Registration
+  const roles = claims
+      .filter(c => c.typ === "roles")
+      .map(c => c.val);
+
   return {
     userId: getClaim(
       "http://schemas.microsoft.com/identity/claims/objectidentifier"
     ),
     username,
     identityProvider: principal.auth_typ,
+    roles,
     claims
   };
 }
 
-module.exports = { getUserFromRequest };
+/**
+ * Require authenticated user helper
+ */
+function requireUser(req) {
+  const user = getUserFromRequest(req);
+
+  if (!user) {
+    const error = new Error("Unauthorized");
+    error.status = 401;
+    throw error;
+  }
+
+  return user;
+}
+
+/**
+ * Require specific role helper
+ */
+function requireRole(user, role) {
+  if (!user.roles.includes(role)) {
+    const error = new Error("Forbidden");
+    error.status = 403;
+    throw error;
+  }
+}
+
+
+module.exports = { getUserFromRequest, requireUser, requireRole };

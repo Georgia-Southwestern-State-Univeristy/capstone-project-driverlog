@@ -1,7 +1,8 @@
 const { app } = require("@azure/functions");
 const { v4: uuid } = require("uuid");
 const { routes } = require("../../shared/cosmosClient");
-const { getUserFromRequest } = require("../../shared/auth");
+const { requireUser, requireAnyRole } = require("../../shared/auth");
+const { getOrCreateUser } = require("../../shared/userService");
 
 app.http("startRoute", {
   methods: ["POST"],
@@ -10,10 +11,11 @@ app.http("startRoute", {
   handler: async (req, context) => {
     try {
       //added for auth to get user info
-      const user = getUserFromRequest(req);
-      if (!user) {
-        return { status: 401, body: "Unauthorized" };
-      }
+      const authUser = requireUser(req);
+      const user = await getOrCreateUser(authUser);
+
+      //added to require any of the listed roles to start a route
+      requireAnyRole(user, ["Driver", "Manager", "Admin"]);
 
       //For testing without auth to add user infor to route. enable (remove comment) if auth disabled for testing
       //const userId = "test-user"; // later from Entra ID

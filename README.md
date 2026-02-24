@@ -194,16 +194,23 @@ fetch("https://yourfunctionapp.azurewebsites.net/api/YourFunction", {
 
 ### Setup new user (Manager, Driver, or Admin) in Azure Auth tenant
 Logon to our new Auth tenant with your GSW creds or local creds that have admin access
+
 The tenant ID is 1e398b4b-eeb6-4dba-9585-6ec8a8e4daf3.
+
 The tenant domain is jessegswoutlook.onmicrosoft.com
 
 Once logged into tenant open Entra ID.
+
 Create a new user in Entra ID.
 
-After creating the new user, go back to Entra ID and select Enterprise Applications
-Open capstonedriverlogauth application
-Go to Manager/Users and Groups section
+After creating the new user, go back to Entra ID and select Enterprise Applications.
+
+Open capstonedriverlogauth application.
+
+Go to Manager/Users and Groups section.
+
 You can add the new user here or edit and existing user to change roles.
+
 When adding a user you can select one of the three roles defined.
 
 ### How to configure new roles if needed
@@ -235,7 +242,9 @@ Locate the Driver you wish to modify. You should see roles and the names of the 
 Once located add the following to the account in the JSON file and click the update icon to update the record.
 
 Must be in this format (remember the trailing comma if not the last entry!)
+
 "managerId": "<userId of the manager>",
+
 Example =  "managerId": "ec3cc791-3dc0-43c3-8527-c13b215191a3",
 
 

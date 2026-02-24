@@ -1,5 +1,5 @@
 const { app } = require("@azure/functions");
-const { routeSummaries } = require("../../shared/cosmosClient");
+const { routeSummaries, users } = require("../../shared/cosmosClient");
 const { requireUser } = require("../../shared/auth");
 const { getOrCreateUser } = require("../../shared/userService");
 

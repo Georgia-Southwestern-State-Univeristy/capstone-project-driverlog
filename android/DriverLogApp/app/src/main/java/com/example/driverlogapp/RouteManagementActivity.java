@@ -179,6 +179,7 @@ public class RouteManagementActivity extends AppCompatActivity {
             RequestBody body = RequestBody.create(routeFile, MediaType.parse("application/json"));
             Request request = new Request.Builder()
                     .url("https://driverlogbackend-cwe7gpeuamfhffgt.eastus-01.azurewebsites.net/api/routes/" + routeID + "/points")
+                    .header("Authorization", "Bearer " + accessToken)
                     .post(body)
                     .build();
             Response response = client.newCall(request).execute();
@@ -237,6 +238,7 @@ public class RouteManagementActivity extends AppCompatActivity {
                 RequestBody body = RequestBody.create("{}", MediaType.parse("application/json"));
                 Request request = new Request.Builder()
                         .url(urlString)
+                        .header("Authorization", "Bearer " + accessToken)
                         .post(body)
                         .build();
                 Response response = client.newCall(request).execute();

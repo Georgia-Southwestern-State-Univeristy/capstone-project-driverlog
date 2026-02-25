@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ISingleAccountPublicClientApplication mSingleAccountApp;
     private String accessToken;
-    private static final String[] scopes = {"api://8a653568-903e-4249-aa36-373da6f46ffa/access_as_user"};
+    private static final String[] scopes = {"api://8a653568-603e-4249-aa36-373da6f46ffa/access_as_user"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         initializeMsal();
-
-
     }
     private void initializeMsal() {
         PublicClientApplication.createSingleAccountPublicClientApplication(MainActivity.this, R.raw.auth_config, new IPublicClientApplication.ISingleAccountApplicationCreatedListener() {
@@ -92,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onError(MsalException exception) {
                 Toast.makeText(MainActivity.this, "loadAccount Error" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                editText.setText(exception.getMessage());
             }
         });
     }
@@ -103,11 +102,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(IAuthenticationResult authenticationResult) {
                 accessToken = authenticationResult.getAccessToken();
+                navigateToRouteManagement();
             }
 
             @Override
             public void onError(MsalException exception) {
                 Toast.makeText(MainActivity.this, "signIn Error" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                editText.setText(exception.getMessage());
             }
 
             @Override
@@ -120,22 +121,32 @@ public class MainActivity extends AppCompatActivity {
     private void getAccessToken(IAccount account) {
         if (mSingleAccountApp == null) return;
 
-        mSingleAccountApp.acquireTokenSilentAsync(scopes, account.getTenantId(), new SilentAuthenticationCallback() {
+        String authority = "https://login.microsoftonline.com/1e398b4b-eeb6-4dba-9585-6ec8a8e4daf3";
+
+        mSingleAccountApp.acquireTokenSilentAsync(scopes, authority, new SilentAuthenticationCallback() {
             @Override
             public void onSuccess(IAuthenticationResult authenticationResult) {
                 accessToken = authenticationResult.getAccessToken();
+                navigateToRouteManagement();
             }
 
             @Override
             public void onError(MsalException exception) {
-                signIn();
+                editText.setText(exception.getMessage());
             }
 
         });
     }
 
+    private void navigateToRouteManagement() {
+        Intent routeManagementIntent = new Intent(this, RouteManagementActivity.class);
+        routeManagementIntent.putExtra("accessToken", accessToken);
+        startActivity(routeManagementIntent);
+        finish();
+    }
+
     public String getAuthorizationHeader() {
-        return "Bearer " + accessToken;
+        return accessToken;
     }
 
 }

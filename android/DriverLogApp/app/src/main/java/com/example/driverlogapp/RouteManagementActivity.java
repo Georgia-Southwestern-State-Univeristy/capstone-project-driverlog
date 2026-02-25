@@ -28,6 +28,8 @@ public class RouteManagementActivity extends AppCompatActivity {
     private String routeID;
     private String summary;
 
+    private String accessToken;
+
     private Button getLocationBtn;
     private Button historyBtn;
     private ImageButton historyExit;
@@ -45,6 +47,8 @@ public class RouteManagementActivity extends AppCompatActivity {
         editText = findViewById(R.id.editTextText);
 
         isRunning = false;
+
+        accessToken = getIntent().getStringExtra("accessToken");
 
         // Initialize Buttons from layout
         getLocationBtn = findViewById(R.id.routeControl);
@@ -196,6 +200,7 @@ public class RouteManagementActivity extends AppCompatActivity {
                 RequestBody body = RequestBody.create("{}", MediaType.parse("application/json"));
                 Request request = new Request.Builder()
                         .url("https://driverlogbackend-cwe7gpeuamfhffgt.eastus-01.azurewebsites.net/api/routes/start")
+                        .header("Authorization", "Bearer " + accessToken)
                         .post(body)
                         .build();
                 Response response = client.newCall(request).execute();

@@ -1,6 +1,7 @@
 package com.example.driverlogapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -63,7 +64,7 @@ public class RouteManagementActivity extends AppCompatActivity {
         historyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupWindow popupWindow = new PopupWindow(RouteManagementActivity.this);
+                /*PopupWindow popupWindow = new PopupWindow(RouteManagementActivity.this);
                 View historyView = getLayoutInflater().inflate(R.layout.history_popup, null);
                 historyText = historyView.findViewById(R.id.summary_text);
                 historyExit = historyView.findViewById(R.id.exit_history_button);
@@ -76,7 +77,11 @@ public class RouteManagementActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         popupWindow.dismiss();
                     }
-                });
+                });*/
+
+                Intent historyIntent = new Intent(RouteManagementActivity.this, HistoryActivity.class);
+                historyIntent.putExtra("accessToken", accessToken);
+                startActivity(historyIntent);
             }
         });
     }

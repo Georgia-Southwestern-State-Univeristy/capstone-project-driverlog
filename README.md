@@ -5,8 +5,17 @@ This app currently allows the user to start and stop a route, as well view the a
 Installation: download the .apk file from the release page (do not download the source code, it is not needed). Install the .apk file on an android device. Run the app.
 
 # Frontend Website
-This website provides the web-based interface for the DriverLog system. It will allow employers to send out assignments, view reports, and monitor flagged entries (currently only has sample data).
-Built with React, Vite, and TailwindCSS.
+Project Overview: 
+The DriverLog website is the web interface for the DriverLog system. It allows employers and administrators to log in, view the dashboard, send assignments to drivers, and view reports.
+
+The website is connected to the backend API and database so it can display real data.
+Built using:
+- React
+- Vite
+- TailwindCSS
+- Azure Functions
+- Azure Cosmos DB
+- Microsoft Authentication (MSAL)
 
 Installation: 
 Make sure Node.js is installed. 
@@ -16,6 +25,16 @@ Steps:
 3. Run 'npm install' in the frontend_website folder
 4. Run 'npm run dev'
 5. Open the local URL provided in a web browser
+
+User Instructions: 
+1. Open the website in a browser.
+2. Log in using Microsoft authentication.
+3. After logging in, you will see the dashboard where you will be able to see an overview of everything that is currently happening. Like active drivers, open assignments, reports today, recent activity, etc.
+4. From the dashboard, you can navigate to the different pages:
+   - The Assignments page to assign tasks to drivers if you're logged in as an Admin or Manager
+   - The reports page that will allow you to see the drivers Daily Reports and Weekly Reports
+   - The flagged page still has placeholders, but will include real data soon
+5. Log out when finished.
 
 # BACKEND Info
 Using Azure Functions for API endpoints and Cosmos DB for database to store route information.

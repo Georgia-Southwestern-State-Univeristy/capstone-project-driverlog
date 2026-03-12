@@ -98,8 +98,8 @@ app.http("endRoute", {
         totalDistanceMiles: totalDistanceMeters / 1609.344,
         averageMovingSpeedMph: avgMovingSpeedMps * 2.23694,
         averageSpeedMph: avgSpeedMps * 2.23694,
-        idleSeconds: idleSeconds,
-        movingSeconds: movingSeconds,
+        idleSeconds,
+        movingSeconds,
 
         completedAt: new Date().toISOString()
       };

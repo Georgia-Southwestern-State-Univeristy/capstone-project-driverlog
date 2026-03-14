@@ -44,10 +44,10 @@ app.http("uploadPoints", {
         return { status: 400, body: "Invalid payload" };
       }
 
-      // We only receive one point per request
-      const currPoint = points[0];
+      // Sort incoming points by timestamp
+      points.sort((a, b) => a.ts - b.ts);
 
-      // Get the last point already stored for this route
+      // Get the last stored point for the route
       const { resources: lastPoints } = await routePoints.items
         .query({
           query: `
@@ -60,13 +60,19 @@ app.http("uploadPoints", {
         })
         .fetchAll();
 
-      const prevPoint = lastPoints[0];
+      let prevPoint = lastPoints[0] ?? null;
 
-      // Calculate distance
-      if (!prevPoint) {
-        currPoint.distanceFromPrev = 0;
-      } else {
-        currPoint.distanceFromPrev = haversineDistance(prevPoint, currPoint);
+      // Calculate distanceFromPrev for each new point
+      for (let i = 0; i < points.length; i++) {
+        const curr = points[i];
+
+        if (!prevPoint) {
+          curr.distanceFromPrev = 0;
+        } else {
+          curr.distanceFromPrev = haversineDistance(prevPoint, curr);
+        }
+
+        prevPoint = curr;
       }
       
       //Add to DB

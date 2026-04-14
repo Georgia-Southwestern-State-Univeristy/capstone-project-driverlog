@@ -39,8 +39,8 @@ function DriverBadge({ value }) {
   return (
     <div className="flex items-center gap-2 min-w-0">
       <span className={`h-2.5 w-2.5 rounded-full ${theme.dot} shrink-0`} title={v} />
-      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${theme.bg} ${theme.text} ${theme.ring} min-w-0`} title={v}>
-        <span className="break-all">{v || "Unknown driver"}</span>
+      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 min-w-0 max-w-[150px] ${theme.bg} ${theme.text} ${theme.ring}`} title={v}>
+        <span className="truncate block">{v || "Unknown driver"}</span>
       </span>
     </div>
   );
@@ -168,14 +168,7 @@ export default function Assignments() {
   const colSpan = canUpdateStatus ? 7 : isCreator ? 7 : 6;
 
   return (
-    <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #1a2a1b 0%, #1e2a2b 50%, #1a2020 100%)" }}>
-      <div className="pointer-events-none fixed inset-0 opacity-20">
-        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl" style={{ background: "#9FCC81" }} />
-        <div className="absolute top-40 -right-24 h-72 w-72 rounded-full blur-3xl" style={{ background: "#66AFB6" }} />
-        <div className="absolute bottom-10 left-20 h-72 w-72 rounded-full blur-3xl" style={{ background: "#C7B788" }} />
-      </div>
-
-      <div className="relative mx-auto max-w-6xl px-4 py-8 space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="rounded-3xl p-6 sm:p-8 shadow-sm" style={{ border: "1px solid rgba(199,183,136,0.25)", background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)" }}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -277,7 +270,7 @@ export default function Assignments() {
           </div>
 
           <div className="overflow-auto">
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto -mx-1"><table className="w-full text-sm min-w-[600px]">
               <thead className="text-left" style={{ background: "rgba(0,0,0,0.1)", color: "#C7B788" }}>
                 <tr style={{ borderBottom: "1px solid rgba(199,183,136,0.15)" }}>
                   <th className="py-3 px-6 font-semibold">Title</th>
@@ -323,7 +316,7 @@ export default function Assignments() {
                       </td>
 
                       {/* Driver */}
-                      <td className="px-6 py-4"><DriverBadge value={driverLabel(a)} /></td>
+                      <td className="px-6 py-4 max-w-[180px]"><DriverBadge value={driverLabel(a)} /></td>
 
                       {/* Assigned by */}
                       <td className="px-6 py-4">
@@ -333,7 +326,7 @@ export default function Assignments() {
                               {a.createdByRole}
                             </span>
                           )}
-                          <span className="text-xs break-all" style={{ color: "#C7B788" }} title={a.createdByEmail || a.createdById || "—"}>
+                          <span className="text-xs truncate block max-w-[120px]" style={{ color: "#C7B788" }} title={a.createdByEmail || a.createdById || "—"}>
                             {a.createdByEmail
                               ? a.createdByEmail
                               : a.createdById
@@ -422,6 +415,7 @@ export default function Assignments() {
               </tbody>
             </table>
           </div>
+          </div>
 
           <div className="px-6 py-4 flex items-center justify-between" style={{ borderTop: "1px solid rgba(199,183,136,0.15)", background: "rgba(0,0,0,0.1)" }}>
             <p className="text-xs" style={{ color: "#C7B788" }}>
@@ -442,7 +436,6 @@ export default function Assignments() {
             )}
           </div>
         </div>
-      </div>
     </div>
   );
 }

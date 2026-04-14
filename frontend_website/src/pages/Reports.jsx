@@ -340,7 +340,7 @@ export default function Reports() {
   }, [selectedRoute, polyline, polylineLoading]);
 
   return (
-    <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #1a2a1b 0%, #1e2a2b 50%, #1a2020 100%)" }}>
+    <div className="space-y-6">
 
       {/* Azure Maps Script */}
       {!window.atlas && (
@@ -417,13 +417,7 @@ export default function Reports() {
           </div>
         </div>
       )}
-      <div className="pointer-events-none fixed inset-0 opacity-20">
-        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl" style={{ background: "#9FCC81" }} />
-        <div className="absolute top-40 -right-24 h-72 w-72 rounded-full blur-3xl" style={{ background: "#66AFB6" }} />
-        <div className="absolute bottom-10 left-20 h-72 w-72 rounded-full blur-3xl" style={{ background: "#C7B788" }} />
-      </div>
-
-      <div className="relative mx-auto max-w-6xl px-4 py-8">
+      <div className="space-y-6">
         {/* Header */}
         <div className="rounded-3xl p-6 sm:p-8" style={cardStyle}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -470,7 +464,7 @@ export default function Reports() {
           </div>
 
           {/* KPI cards for selected date */}
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-6 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
             {[
               { title: `Drivers with routes`, value: dailyTotals.driversWithRoutes, icon: "👥" },
               { title: `Total routes`, value: dailyTotals.totalRoutes, icon: "🧾" },
@@ -538,7 +532,7 @@ export default function Reports() {
                       </span>
                     </div>
                   </div>
-                  <div className="mt-4 grid grid-cols-4 gap-3">
+                  <div className="mt-4 grid grid-cols-2 gap-3">
                     {[
                       { title: "Miles", value: u.milesDay.toFixed(1), accent: "#66AFB6" },
                       { title: "Avg time", value: formatDuration(u.avgDaySec), accent: "#9FCC81" },
@@ -597,7 +591,7 @@ export default function Reports() {
                 <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ${userBadgeClass(u.displayName)}`}>
                   <span className="break-all">{u.displayName}</span>
                 </span>
-                <div className="mt-4 grid grid-cols-4 gap-3">
+                <div className="mt-4 grid grid-cols-2 gap-3">
                   {[{ title: "Miles", value: u.weekMiles.toFixed(1) }, { title: "Routes", value: u.weekRoutes }, { title: "Avg time", value: formatDuration(u.avgWeekSec) }, { title: "Idle time", value: formatDuration(u.idleWeekSec) }].map((m) => (
                     <div key={m.title} className="rounded-xl p-3" style={innerCard}>
                       <p className="text-xs font-semibold" style={{ color: "#C7B788" }}>{m.title}</p>
@@ -620,7 +614,7 @@ export default function Reports() {
             <p className="text-sm mt-1" style={{ color: "#C7B788" }}>Click any row to view the route on a map.</p>
           </div>
           <div className="overflow-auto">
-            <table className="min-w-full text-sm">
+            <div className="overflow-x-auto"><table className="min-w-full text-sm">
               <thead style={{ background: "rgba(0,0,0,0.15)", color: "#C7B788" }}>
                 <tr style={{ borderBottom: "1px solid rgba(199,183,136,0.12)" }}>
                   {["Driver", "Completed", "Miles", "Duration", "Avg Speed"].map((h, i) => (
@@ -649,7 +643,7 @@ export default function Reports() {
                   <tr><td className="px-6 py-6" style={{ color: "#C7B788" }} colSpan={5}>No route summaries yet.</td></tr>
                 )}
               </tbody>
-            </table>
+            </table></div>
           </div>
           {recentRoutes.length > 20 && (
             <div className="px-6 py-4 flex items-center justify-between" style={{ borderTop: "1px solid rgba(199,183,136,0.12)", background: "rgba(0,0,0,0.1)" }}>

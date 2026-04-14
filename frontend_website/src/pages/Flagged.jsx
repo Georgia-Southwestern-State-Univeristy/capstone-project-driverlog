@@ -30,8 +30,8 @@ function DriverBadge({ value }) {
   return (
     <div className="flex items-center gap-2 min-w-0">
       <span className={`h-2.5 w-2.5 rounded-full shrink-0 ${theme.dot}`} />
-      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${theme.bg} ${theme.text} ${theme.ring}`}>
-        <span className="break-all">{v}</span>
+      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 min-w-0 max-w-[160px] ${theme.bg} ${theme.text} ${theme.ring}`} title={v}>
+        <span className="truncate">{v}</span>
       </span>
     </div>
   );
@@ -56,7 +56,7 @@ function SeverityBadge({ severity }) {
 
 function GlowBlobs() {
   return (
-    <div className="pointer-events-none fixed inset-0 opacity-20">
+    <div className="pointer-events-none absolute inset-0 opacity-20 overflow-hidden">
       <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl" style={{ background: "#9FCC81" }} />
       <div className="absolute top-40 -right-24 h-72 w-72 rounded-full blur-3xl" style={{ background: "#66AFB6" }} />
       <div className="absolute bottom-10 left-20 h-72 w-72 rounded-full blur-3xl" style={{ background: "#C7B788" }} />
@@ -71,7 +71,7 @@ function DriverView({ allEntries, status, error, onRefresh }) {
   const sorted = [...allEntries].sort((a, b) => (severityOrder[a.severity] ?? 1) - (severityOrder[b.severity] ?? 1));
 
   return (
-    <div className="relative mx-auto max-w-4xl px-4 py-8 space-y-6">
+    <div className="relative mx-auto max-w-4xl w-full px-4 py-8 space-y-6">
       {/* Header */}
       <div className="rounded-3xl p-6 sm:p-8 shadow-sm" style={{ border: "1px solid rgba(199,183,136,0.25)", background: "rgba(255,255,255,0.05)", backdropFilter: "blur(8px)" }}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -183,7 +183,7 @@ function AdminManagerView({ allEntries, status, error, onRefresh }) {
   }
 
   return (
-    <div className="relative mx-auto max-w-6xl px-4 py-8 space-y-6">
+    <div className="relative mx-auto max-w-6xl w-full px-4 py-8 space-y-6">
       {/* Review modal */}
       {selectedEntry && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)" }} onClick={() => setSelectedEntry(null)}>
@@ -357,7 +357,7 @@ export default function Flagged() {
   const isDriver = me?.role === "Driver";
 
   return (
-    <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #1a2a1b 0%, #1e2a2b 50%, #1a2020 100%)" }}>
+    <div className="relative overflow-x-hidden">
       <GlowBlobs />
       {isDriver
         ? <DriverView allEntries={allEntries} status={status} error={error} onRefresh={loadFlaggedEntries} />

@@ -47,6 +47,7 @@ Cosmos DB (NoSQL) currently has three containers defined.
         * id
         * routeId
         * userId
+        * username
         * status (Active or Completed)
         * startTime
 * routePoints
@@ -62,14 +63,55 @@ Cosmos DB (NoSQL) currently has three containers defined.
         * id
         * routeId
         * userId
+        * username
         * pointCount (number of points collected during route)
         * durationSeconds
         * totalDistanceMeters
-        * totalDistanceMile
+        * totalDistanceMiles
+        * averageMovingSpeedMph
         * averageSpeedMph
+        * maxSpeedMph
+        * idleSeconds
+        * movingSeconds
         * completedAt (Date/Time when route completed)
+* assignments
+    * Stored assignments for users
+        * id
+        * driverId
+        * driverEmail
+        * createdById
+        * createdByEmail
+        * createdByRole
+        * title
+        * notes
+        * priority
+        * status
+        * createdAt
+        * updatedAt
+* flaggedEntries
+    * Any routes that are flagged the flagged information is stored here
+        * id
+        * driverId
+        * driverEmail
+        * reason
+        * severity
+        * status
+        * sourceType
+        * notes
+        * createdAt
+        * resolvedAt
+        * resolvedBy
+        * createdBy
+* users
+    * User information about each user of the system
+        * id
+        * userId
+        * username
+        * role
+        * managerId
+        * createdAt
 
-Azure functions which expose 3 API endpoints used to interact with the backend.
+Azure functions which expose 13 API endpoints used to interact with the backend.
 
 * startRoute.js
     * This function starts the route by generating unique UUID for the route and passing back to client as response.
@@ -81,6 +123,26 @@ Azure functions which expose 3 API endpoints used to interact with the backend.
 * endRoute.js
     * This function ends the route and generates the summary data from data collected during the route.
     * Summary data generated from this function about the route is uploaded to the routeSummaries container in the database
+* createAssignment.js
+    * Creates driver assignments for users by Managers and/or Admins
+* deleteAssignments.js
+    * Deletes and assignment.
+* getAssignments.js
+    * Used to get a specific assignment for viewing.
+* getFlaggedEntries
+    * used to pull flagged entries from database for viewing on website.
+* getRoutePolyline
+    * used to pull route points for specific route in a GeoJson format for drawing poly line on map. Used by website to display the polyline for a specific route on map.
+* getRoutes
+    * Used by website to pull route information
+* getSummaries
+    * Used to pull summary information for ended routes.
+* me
+    * Test endpoint to show information about the currently logged in user
+* updateAssignStatus
+    * used to updated assignment status of an assignment for driver.
+* updateFlagStatus
+    * When status of flagged route is updated this endpoint is used to change that status in the database.
 <details>
 
 <summary>Click here to see how to Connect to Backend</summary>

@@ -16,6 +16,8 @@ Built using:
 - Azure Functions
 - Azure Cosmos DB
 - Microsoft Authentication (MSAL)
+- Azure Static Web App
+- Azure Maps
 
 Installation: 
 Make sure Node.js is installed. 
@@ -29,11 +31,11 @@ Steps:
 User Instructions: 
 1. Open the website in a browser.
 2. Log in using Microsoft authentication.
-3. After logging in, you will see the dashboard where you will be able to see an overview of everything that is currently happening. Like active drivers, open assignments, reports today, recent activity, etc.
+3. After logging in, you will see the dashboard where you will be able to see an overview of everything that is currently happening. Like active drivers, open assignments, reports today, recent activity, etc. (It's roles-based so depending on what kind of account you're logged in you will get certain information)
 4. From the dashboard, you can navigate to the different pages:
    - The Assignments page to assign tasks to drivers if you're logged in as an Admin or Manager
    - The reports page that will allow you to see the drivers Daily Reports and Weekly Reports
-   - The flagged page still has placeholders, but will include real data soon
+   - The flagged page that will allow you to view and review flagged entries
 5. Log out when finished.
 # Frontend Website PUBLIC DOMAIN
 https://salmon-smoke-0a03eb20f.1.azurestaticapps.net
